@@ -29,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         //1. verificar que el token existe. Si no existe seguir la cadena de filtro pero impedir el acceso
-
         final String token = getTokenFromRequest(request);
 
         if(token == null){
@@ -38,18 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         //2. extraer el username del token
-
         String username = jwtService.extractUsername(token);
 
         //3. con el username buscar en el security context si es que ya existe, no hay nada que hacer, salvo continuar la cadena de filtros
-
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             //4. si no esta en contexto de seguridad ver si existe en nuestra BBDD de usuarios
-
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             //5. verificar que el token sea valido
-
             if(jwtService.isTokenValid(token, userDetails)){
                 //6. crear el objeto authentication y meterlo en security context
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -62,11 +57,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request,response);
         }
-
-
-
-
-
 
     }
 
